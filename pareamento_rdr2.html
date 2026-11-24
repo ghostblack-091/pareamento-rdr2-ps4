@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel de Pareamento — RDR2 PS4</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #121212; color: #f4f4f4; margin: 0; padding: 16px; }
+    .card { max-width: 520px; margin: 0 auto; background: #1c1c1c; border: 1px solid #2e2e2e; border-radius: 10px; padding: 18px; }
+    h2 { margin-top: 0; color: #e74c3c; }
+    label { display: block; margin-top: 12px; font-size: 14px; font-weight: bold; }
+    input, textarea { width: 100%; box-sizing: border-box; margin-top: 6px; padding: 10px; border-radius: 6px; border: 1px solid #3a3a3a; background: #262626; color: #fff; font-size: 15px; }
+    .codigo-box { margin-top: 14px; padding: 14px; border-radius: 8px; background: #141414; border: 1px dashed #e74c3c; text-align: center; }
+    .codigo-valor { font-family: monospace; font-size: 24px; letter-spacing: 2px; color: #2ecc71; margin-top: 6px; }
+    button { width: 100%; margin-top: 12px; padding: 12px; border: 0; border-radius: 6px; background: #c0392b; color: #fff; font-size: 15px; font-weight: bold; cursor: pointer; }
+    button.secundario { background: #34495e; }
+    textarea { min-height: 110px; font-family: monospace; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Pareamento RDR2 PS4</h2>
+
+    <label for="usuario">Apelido / Identificador</label>
+    <input id="usuario" type="text" placeholder="Ex.: jogador_rdr2" />
+
+    <label for="cusa">Title ID</label>
+    <input id="cusa" type="text" value="CUSA04130" />
+
+    <label for="patch">Versão do Patch</label>
+    <input id="patch" type="text" value="1.32" />
+
+    <button type="button" onclick="gerarCodigo()">Gerar Código de Pareamento</button>
+
+    <div class="codigo-box">
+      <div>Código Gerado</div>
+      <div id="codigoSaida" class="codigo-valor">------</div>
+    </div>
+
+    <label for="resumo">Resumo para conferência / envio</label>
+    <textarea id="resumo" readonly></textarea>
+
+    <button type="button" class="secundario" onclick="copiarResumo()">Copiar Resumo</button>
+  </div>
+
+  <script>
+    function gerarCodigo() {
+      const usuario = (document.getElementById("usuario").value.trim() || "sessao_ps4");
+      const cusa = (document.getElementById("cusa").value.trim() || "CUSA04130").toUpperCase();
+      const patch = (document.getElementById("patch").value.trim() || "1.32");
+
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let codigo = "";
+      for (let i = 0; i < 6; i++) {
+        codigo += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+
+      document.getElementById("codigoSaida").textContent = codigo;
+      document.getElementById("resumo").value =
+        `Usuario: ${usuario}\nTitle ID: ${cusa}\nPatch: ${patch}\nCodigo: ${codigo}\nStatus: Aguardando vinculo local`;
+    }
+
+    function copiarResumo() {
+      const campo = document.getElementById("resumo");
+      if (!campo.value) {
+        gerarCodigo();
+      }
+      campo.select();
+      campo.setSelectionRange(0, 99999);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(campo.value).catch(() => {});
+      }
+      try {
+        document.execCommand("copy");
+      } catch (e) {}
+    }
+
+    gerarCodigo();
+  </script>
+</body>
+</html>
